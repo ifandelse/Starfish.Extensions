@@ -1,0 +1,7 @@
+_ReSharper.*
+src/_Resharper.*
+*.user
+*.suo
+bin
+obj
+Debug
