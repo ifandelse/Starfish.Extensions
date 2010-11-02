@@ -11,6 +11,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
         public bool EnableSsl { get; set; }
         public string FileFormat { get; set; }
         public int FtpPort { get; set; }
+        public string FtpFolder { get; set; }
         public bool KeepAlive { get; set; }
         public string Password { get; set; }
         public string TargetFileName { get; set; }
@@ -18,6 +19,8 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
         public bool UseBinary { get; set; }
         public bool UsePassive { get; set; }
         public string UserName { get; set; }
+        public bool AppendExecutionDateToFileName { get; set; }
+        public string DateTimeFormatToAppend { get; set; }
 
         public static FtpClientConfiguration GetFtpConfigurationFromSettings(Setting[] settings)
         {
@@ -61,11 +64,17 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
             config.UsePassive = settingNames.Contains("UsePassive")
                                 ? Convert.ToBoolean(settingsList.ToList().First(x => x.Name == "UsePassive").Value)
                                 : false;
+            config.AppendExecutionDateToFileName = settingNames.Contains("AppendExecutionDateToFileName")
+                                ? Convert.ToBoolean(settingsList.ToList().First(x => x.Name == "AppendExecutionDateToFileName").Value)
+                                : false;
             config.FtpPort = settingNames.Contains("FtpPort")
                                 ? Convert.ToInt32(settingsList.ToList().First(x => x.Name == "FtpPort").Value)
                                 : 21;
-            config.Password = settingNames.Contains("FtpFolder")
+            config.FtpFolder = settingNames.Contains("FtpFolder")
                                 ? settingsList.ToList().First(x => x.Name == "FtpFolder").Value
+                                : String.Empty;
+            config.DateTimeFormatToAppend = settingNames.Contains("DateTimeFormatToAppend")
+                                ? settingsList.ToList().First(x => x.Name == "DateTimeFormatToAppend").Value
                                 : String.Empty;
             
             config.Password = settingsList.ToList().First(x => x.Name == "Password").Value;
@@ -86,7 +95,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="FTP URL",
-                                Name="FTP URL",
+                                Name="FtpUrl",
                                 ReadOnly = false,
                                 Required = true,
                                 IsPassword = false,
@@ -95,7 +104,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="FTP Port",
-                                Name="FTP Port",
+                                Name="FtpPort",
                                 ReadOnly = false,
                                 Required = true,
                                 IsPassword = false,
@@ -104,7 +113,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="FTP Folder",
-                                Name="FTP Folder",
+                                Name="FtpFolder",
                                 ReadOnly = false,
                                 Required = false,
                                 IsPassword = false,
@@ -113,7 +122,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="Enable SSL",
-                                Name="Enable SSL",
+                                Name="EnableSsl",
                                 ReadOnly = false,
                                 Required = false,
                                 IsPassword = false,
@@ -122,7 +131,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="Keep Alive",
-                                Name="Keep Alive",
+                                Name="KeepAlive",
                                 ReadOnly = false,
                                 Required = false,
                                 IsPassword = false,
@@ -131,7 +140,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="Use Binary",
-                                Name="Use Binary",
+                                Name="UseBinary",
                                 ReadOnly = false,
                                 Required = false,
                                 IsPassword = false,
@@ -140,7 +149,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="Use Passive",
-                                Name="Use Passive",
+                                Name="UsePassive",
                                 ReadOnly = false,
                                 Required = false,
                                 IsPassword = false,
@@ -148,8 +157,32 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                             },
                         new Setting()
                             {
+                                DisplayName="Append Execution Date To File Name",
+                                Name="AppendExecutionDateToFileName",
+                                ReadOnly = false,
+                                Required = false,
+                                IsPassword = false,
+                                Encrypted = false
+                            },
+                        new Setting()
+                            {
+                                DisplayName="Date Time Format To Append",
+                                Name="DateTimeFormatToAppend",
+                                ReadOnly = false,
+                                Required = false,
+                                IsPassword = false,
+                                Encrypted = false,
+                                ValidValues = new ValidValue[]
+                                                  {
+                                                      new ValidValue() {Label = "yyyyMMdd", Value = "yyyyMMdd"},
+                                                      new ValidValue() {Label = "MM-dd-yyyy", Value = "MM-dd-yyyy"},
+                                                      new ValidValue() {Label = "yyyyMMddhhmmss", Value = "yyyyMMddhhmmss"}
+                                                  }
+                            },
+                        new Setting()
+                            {
                                 DisplayName="Target File Name",
-                                Name="Target File Name",
+                                Name="TargetFileName",
                                 ReadOnly = false,
                                 Required = true,
                                 IsPassword = false,
@@ -158,7 +191,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="File Format",
-                                Name="File Format",
+                                Name="FileFormat",
                                 ReadOnly = false,
                                 Required = true,
                                 IsPassword = false,
@@ -177,7 +210,7 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                         new Setting()
                             {
                                 DisplayName="Username",
-                                Name="Username",
+                                Name="UserName",
                                 ReadOnly = false,
                                 Required = true,
                                 IsPassword = false,
@@ -205,11 +238,12 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
 
         public Setting[] ToSettingsArray()
         {
-            return new Setting[10]
+            return new Setting[13]
             { 
                 new Setting() { Name = "EnableSsl", Value = EnableSsl.ToString() },
                 new Setting() { Name = "FileFormat", Value = FileFormat },
                 new Setting() { Name = "FtpPort", Value = FtpPort.ToString() },
+                new Setting() { Name = "FtpFolder", Value = FtpFolder },
                 new Setting() { Name = "KeepAlive", Value = KeepAlive.ToString() },
                 new Setting() { Name = "Password", Value = Password },
                 new Setting() { Name = "TargetFileName", Value = TargetFileName },
@@ -217,6 +251,8 @@ namespace Starfish.Extensions.Delivery.Ftp.Provider
                 new Setting() { Name = "UseBinary", Value = UseBinary.ToString() },
                 new Setting() { Name = "UsePassive", Value = UsePassive.ToString() },
                 new Setting() { Name = "UserName", Value = UserName },
+                new Setting() { Name = "AppendExecutionDateToFileName", Value = AppendExecutionDateToFileName.ToString() },
+                new Setting() { Name = "DateTimeFormatToAppend", Value = DateTimeFormatToAppend }
             };
         }
     }

@@ -11,6 +11,7 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
     {
         public TextBox FtpUri { get; set; }
         public TextBox FtpPort { get; set; }
+        public TextBox FtpFolder { get; set; }
         public CheckBox EnableSsl { get; set; }
         public DropDownList FileFormat { get; set; }
         public CheckBox KeepAlive { get; set; }
@@ -18,7 +19,9 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
         public TextBox TargetFileName { get; set; }
         public CheckBox UseBinary { get; set; }
         public CheckBox UsePassive { get; set; }
-        public TextBox UserName { get; set; } 
+        public TextBox UserName { get; set; }
+        public DropDownList DateTimeFormatToAppend { get; set; }
+        public CheckBox AppendExecutionDateToFileName { get; set; }
 
         private FtpHtmlTable()
         {
@@ -40,7 +43,8 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
         private void InitControls()
         {
             FtpUri = new TextBox() { CssClass = "msrs-txtBox" };
-            FtpPort = new TextBox() { CssClass = "msrs-txtBox" };
+            FtpFolder = new TextBox() { CssClass = "msrs-txtBox" };
+            FtpPort = new TextBox() { CssClass = "msrs-txtBox", Text = "21"};
             EnableSsl = new CheckBox();
             FileFormat = new DropDownList();
             KeepAlive = new CheckBox();
@@ -49,6 +53,8 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
             UseBinary = new CheckBox();
             UsePassive = new CheckBox();
             UserName = new TextBox() { CssClass = "msrs-txtBox" };
+            AppendExecutionDateToFileName = new CheckBox();
+            DateTimeFormatToAppend = new DropDownList();
         }
 
         private void InitTable()
@@ -106,6 +112,18 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
                         .Create()
                         .AddCell(FtpTableCell
                                     .Create()
+                                    .ColumnSpan(1)
+                                    .AddControl(FtpLabel
+                                                .Create("lblFtpFolder")
+                                                .ElementText("Folder")))
+                        .AddCell(FtpTableCell
+                                    .Create()
+                                    .ColumnSpan(3)
+                                    .AddControl(FtpFolder)))
+            .AddRow(FtpTableRow
+                        .Create()
+                        .AddCell(FtpTableCell
+                                    .Create()
                                     .AddControl(FtpLabel
                                                 .Create("lblTargetFileName")
                                                 .ElementText("Target File Name")))
@@ -120,6 +138,24 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
                         .AddCell(FtpTableCell
                                     .Create()
                                     .AddControl(FileFormat)))
+            .AddRow(FtpTableRow
+                        .Create()
+                        .AddCell(FtpTableCell
+                                    .Create()
+                                    .AddControl(FtpLabel
+                                                .Create("lblAppendDateTimeFormatToFileName")
+                                                .ElementText("Append Date/Time to File")))
+                        .AddCell(FtpTableCell
+                                    .Create()
+                                    .AddControl(AppendExecutionDateToFileName))
+                        .AddCell(FtpTableCell
+                                    .Create()
+                                    .AddControl(FtpLabel
+                                                .Create("lblDateTimeFormatToAppend")
+                                                .ElementText("Format To Append")))
+                        .AddCell(FtpTableCell
+                                    .Create()
+                                    .AddControl(DateTimeFormatToAppend)))
             .AddRow(FtpTableRow
                     .Create()
                     .AddCell(FtpTableCell

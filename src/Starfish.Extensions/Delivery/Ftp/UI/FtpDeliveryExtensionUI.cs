@@ -28,6 +28,8 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
         {
             _table.FileFormat.DataSource = new List<string>(ReportServerInformation.RenderingExtension.Select(s => s.Name).Where(x => x != "NULL"));
             _table.FileFormat.DataBind();
+            _table.DateTimeFormatToAppend.DataSource = new List<string>() { "yyyyMMdd","MM-dd-yyyy","yyyyMMddhhmmss" };
+            _table.DateTimeFormatToAppend.DataBind();
         }
 
         private void FtpDeliveryExtensionUI_Init(object sender, EventArgs e)
@@ -71,10 +73,13 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
                 config.KeepAlive = _table.KeepAlive.Checked;
                 config.Password = _table.Password.Text;
                 config.TargetFileName = _table.TargetFileName.Text;
+                config.FtpFolder = _table.FtpFolder.Text;
                 config.Uri = _table.FtpUri.Text;
                 config.UseBinary = _table.UseBinary.Checked;
                 config.UsePassive = _table.UsePassive.Checked;
                 config.UserName = _table.UserName.Text;
+                config.AppendExecutionDateToFileName = _table.AppendExecutionDateToFileName.Checked;
+                config.DateTimeFormatToAppend = _table.DateTimeFormatToAppend.SelectedValue;
                 return config.ToSettingsArray();
             }
             set
@@ -86,10 +91,13 @@ namespace Starfish.Extensions.Delivery.Ftp.UI
                 _table.KeepAlive.Checked = config.KeepAlive;
                 _table.Password.Text = config.Password;
                 _table.TargetFileName.Text = config.TargetFileName;
+                _table.FtpFolder.Text = config.FtpFolder;
                 _table.FtpUri.Text = config.Uri;
                 _table.UseBinary.Checked = config.UseBinary;
                 _table.UsePassive.Checked = config.UsePassive;
                 _table.UserName.Text = config.UserName;
+                _table.AppendExecutionDateToFileName.Checked = config.AppendExecutionDateToFileName;
+                _table.DateTimeFormatToAppend.SelectedValue = config.DateTimeFormatToAppend;
             }
         }
 

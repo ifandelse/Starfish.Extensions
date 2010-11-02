@@ -59,9 +59,7 @@
     <Compile Include="Delivery\Ftp\Provider\FtpClient.cs" />
     <Compile Include="Delivery\Ftp\Provider\FtpClientConfiguration.cs" />
     <Compile Include="Delivery\Ftp\Provider\FtpDeliveryExtension.cs" />
-    <Compile Include="Delivery\Ftp\UI\FtpCheckBox.cs" />
     <Compile Include="Delivery\Ftp\UI\FtpDeliveryExtensionUI.cs" />
-    <Compile Include="Delivery\Ftp\UI\FtpDropDown.cs" />
     <Compile Include="Delivery\Ftp\UI\FtpHtmlTable.cs" />
     <Compile Include="Delivery\Ftp\UI\FtpLabel.cs" />
     <Compile Include="Delivery\Ftp\UI\FtpTableCell.cs" />
